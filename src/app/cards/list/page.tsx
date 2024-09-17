@@ -3,8 +3,21 @@ import { useEffect, useState } from "react";
 import * as Scry from "scryfall-sdk";
 
 // Import CSS
-import styles from "@styles/cards/list/Cards.module.css";
+import { styled } from "@mui/material/styles";
+import Grid from "@mui/material/Grid2";
+import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
 
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: "center",
+  color: theme.palette.text.secondary,
+  ...theme.applyStyles("dark", {
+    backgroundColor: "#1A2027",
+  }),
+}));
 export default function CardsList() {
   const [cardsData, setCardData] = useState<Scry.Card[] | null>(null);
 
@@ -31,28 +44,28 @@ export default function CardsList() {
   }, []);
 
   return (
-    <div>
-      <h1>Card List</h1>
-
-      <div className={styles.cardList}>
+    <Box sx={{ flexGrow: 1 }}>
+      <Grid
+        container
+        spacing={{ xs: 2, md: 3 }}
+        columns={{ xs: 4, sm: 8, md: 12 }}
+      >
         {cardsData?.map((card) => (
-          <div key={card.id} className={styles.card}>
-            <div className={styles.card_info}>
-              <p className={styles.title}>
-                {card.name}
-                <img
+          <Grid size={{ xs: 2, sm: 4, md: 4 }}>
+            <Item>
+              {card.name}
+              {/* <img
                   src={
                     card.image_uris?.large ||
                     card.image_uris?.normal ||
                     card.image_uris?.small
                   }
                   alt={card.name}
-                />
-              </p>
-            </div>
-          </div>
+                /> */}
+            </Item>
+          </Grid>
         ))}
-      </div>
-    </div>
+      </Grid>
+    </Box>
   );
 }

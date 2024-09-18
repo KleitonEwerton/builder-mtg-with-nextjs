@@ -22,13 +22,16 @@ import ShareIcon from "@mui/icons-material/Share";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { styled as muiStyled } from "@mui/material/styles";
+import FormattedText from "../../../../utils/formated";
+import { Container } from "@mui/material";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: "#fff",
   ...theme.typography.body2,
   padding: theme.spacing(1),
-  textAlign: "center",
+  textAlign: "justify",
   color: theme.palette.text.secondary,
+  width: "100%",
 }));
 
 const ExpandMore = muiStyled((props: any) => {
@@ -62,88 +65,90 @@ export default function CardsList() {
         const result = await emitter.waitForAll();
         const cards = result as Scry.Card[]; // Ajuste se necessário com base na estrutura dos dados
         setCardData(cards);
-      } catch (error) {
-        console.error("Error fetching card data:", error);
-      }
+      } catch (error) {}
     }
 
     fetchCardData();
   }, []);
 
   return (
-    <Box sx={{ flexGrow: 1, padding: 2 }}>
-      <Grid
-        container
-        spacing={{ xs: 2, sm: 3, md: 4 }}
-        columns={{ xs: 1, sm: 2, md: 3, lg: 4, xl: 5 }}
-      >
-        {cardsData?.map((card) => (
-          <Grid key={card.id} item xs={12} sm={6} md={4} lg={3} xl={2}>
-            <Item>
-              <Card
-                sx={{
-                  width: "100%",
-                  maxWidth: "300px",
-                  height: "auto",
-                  backgroundColor: "rgba(255, 255, 255, 0.5)",
-                  backdropFilter: "blur(5px)",
-                }}
-              >
-                <CardHeader
-                  action={
-                    <IconButton aria-label="settings">
-                      <MoreVertIcon />
-                    </IconButton>
-                  }
-                  title={card.name}
-                  subheader={card.colors?.join(", ")}
-                />
-                <CardMedia
-                  component="img"
+    <Container maxWidth="lg">
+      <Box sx={{ flexGrow: 1, padding: 2 }}>
+        <Grid
+          container
+          spacing={{ xs: 2, sm: 3, md: 4, lg: 5 }}
+          columns={{ xs: 1, sm: 2, md: 3, lg: 4 }}
+        >
+          {cardsData?.map((card) => (
+            <Grid key={card.id}>
+              <Item>
+                <Card
                   sx={{
-                    height: "auto", // Ajusta a altura automaticamente
-                    width: "100%", // Preenche a largura do card
-                    objectFit: "contain", // Garante que a imagem não seja cortada
-                    maxHeight: "300px", // Limita a altura máxima da imagem
+                    width: "100%",
+                    maxWidth: "300px",
+                    height: "auto",
+                    backgroundColor: "rgba(255, 255, 255, 0.5)",
+                    backdropFilter: "blur(5px)",
                   }}
-                  image={
-                    card.image_uris?.large ||
-                    card.image_uris?.normal ||
-                    card.image_uris?.small
-                  }
-                  alt={card.name}
-                />
-                <CardActions disableSpacing>
-                  <IconButton aria-label="add to favorites">
-                    <FavoriteIcon />
-                  </IconButton>
-                  <IconButton aria-label="share">
-                    <ShareIcon />
-                  </IconButton>
-                  <ExpandMore
-                    expand={expanded[card.id] || false}
-                    onClick={() => handleExpandClick(card.id)}
-                    aria-expanded={expanded[card.id] || false}
-                    aria-label="show more"
-                  >
-                    <ExpandMoreIcon />
-                  </ExpandMore>
-                </CardActions>
-                <Collapse in={expanded[card.id]} timeout="auto" unmountOnExit>
-                  <CardContent>
-                    <Typography
-                      variant="body2"
-                      sx={{ color: "text.secondary" }}
+                >
+                  <CardHeader
+                    action={
+                      <IconButton aria-label="settings">
+                        <MoreVertIcon />
+                      </IconButton>
+                    }
+                    title={card.name}
+                    subheader={card.colors?.join(", ")}
+                  />
+                  <CardMedia
+                    component="img"
+                    sx={{
+                      height: "auto", // Ajusta a altura automaticamente
+                      width: "100%", // Preenche a largura do card
+                      objectFit: "contain", // Garante que a imagem não seja cortada
+                      maxHeight: "300px", // Limita a altura máxima da imagem
+                    }}
+                    // image={
+                    //   card.image_uris?.large ||
+                    //   card.image_uris?.normal ||
+                    //   card.image_uris?.small
+                    // }
+                    alt={card.name}
+                  />
+                  <CardActions disableSpacing>
+                    <IconButton aria-label="add to favorites">
+                      <FavoriteIcon />
+                    </IconButton>
+                    <IconButton aria-label="share">
+                      <ShareIcon />
+                    </IconButton>
+                    <ExpandMore
+                      expand={expanded[card.id] || false}
+                      onClick={() => handleExpandClick(card.id)}
+                      aria-expanded={expanded[card.id] || false}
+                      aria-label="show more"
                     >
-                      {card.flavor_text || "No flavor text available"}
-                    </Typography>
-                  </CardContent>
-                </Collapse>
-              </Card>
-            </Item>
-          </Grid>
-        ))}
-      </Grid>
-    </Box>
+                      <ExpandMoreIcon />
+                    </ExpandMore>
+                  </CardActions>
+                  <Collapse in={expanded[card.id]} timeout="auto" unmountOnExit>
+                    <CardContent>
+                      <Typography
+                        variant="body2"
+                        sx={{ color: "text.secondary" }}
+                      >
+                        <FormattedText
+                          text={card.oracle_text || ""}
+                        ></FormattedText>
+                      </Typography>
+                    </CardContent>
+                  </Collapse>
+                </Card>
+              </Item>
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+    </Container>
   );
 }

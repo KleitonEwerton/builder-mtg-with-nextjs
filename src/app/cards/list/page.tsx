@@ -24,7 +24,8 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { styled as muiStyled } from "@mui/material/styles";
 import FormattedText from "../../../../utils/formated";
 import { Container } from "@mui/material";
-import AdvancedSearch from "../basicSearch";
+import BasicSearch from "../basicSearch";
+import { useRouter } from "next/navigation";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: "#fff",
@@ -49,8 +50,18 @@ const ExpandMore = muiStyled((props: any) => {
 export default function CardsList() {
   const [cardsData, setCardData] = useState<Scry.Card[] | null>(null);
   const [expanded, setExpanded] = useState<{ [key: string]: boolean }>({});
-  const searchParams = new URLSearchParams(window.location.search); // Alternativa para capturar o search query
-  const search = searchParams.get("search");
+  const [search, setSearch] = useState<string | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    // Captura o parâmetro de busca da URL
+    const query = new URLSearchParams(window.location.search);
+    const searchQuery = query.get("search");
+    setSearch(searchQuery);
+    console.log("search -> ", searchQuery);
+
+    // Adicione aqui a lógica para buscar os dados com base no valor de searchQuery
+  }, [router.asPath]); // Dependência em router.asPath para detectar mudanças na URL
 
   const handleExpandClick = (id: string) => {
     setExpanded((prevExpanded) => ({
@@ -78,7 +89,7 @@ export default function CardsList() {
 
   return (
     <Container maxWidth="lg">
-      <AdvancedSearch />
+      <BasicSearch />
       <Box sx={{ flexGrow: 1, padding: 2 }}>
         <Grid
           container
@@ -113,11 +124,11 @@ export default function CardsList() {
                       objectFit: "contain", // Garante que a imagem não seja cortada
                       maxHeight: "300px", // Limita a altura máxima da imagem
                     }}
-                    // image={
-                    //   card.image_uris?.large ||
-                    //   card.image_uris?.normal ||
-                    //   card.image_uris?.small
-                    // }
+                    image={
+                      card.image_uris?.large ||
+                      card.image_uris?.normal ||
+                      card.image_uris?.small
+                    }
                     alt={card.name}
                   />
                   <CardActions disableSpacing>
@@ -138,14 +149,9 @@ export default function CardsList() {
                   </CardActions>
                   <Collapse in={expanded[card.id]} timeout="auto" unmountOnExit>
                     <CardContent>
-                      <Typography
-                        variant="body2"
-                        sx={{ color: "text.secondary" }}
-                      >
-                        <FormattedText
-                          text={card.oracle_text || ""}
-                        ></FormattedText>
-                      </Typography>
+                      <FormattedText
+                        text={card.oracle_text || ""}
+                      ></FormattedText>
                     </CardContent>
                   </Collapse>
                 </Card>

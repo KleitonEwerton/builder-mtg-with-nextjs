@@ -125,8 +125,8 @@ export default function AdvancedSearch() {
               overflowY: "auto",
             }}
           >
-            {suggestions.map((suggestion, index) => (
-              <ListItem onClick={() => handleSuggestionClick(suggestion)}>
+            {suggestions.map((suggestion) => (
+              <ListItem key={suggestion} onClick={() => handleSuggestionClick(suggestion)}>
                 <ListItemText primary={suggestion} />
               </ListItem>
             ))}

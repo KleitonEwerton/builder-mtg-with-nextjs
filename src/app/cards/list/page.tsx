@@ -13,9 +13,9 @@ import {
   CardHeader,
   CardMedia,
   IconButton,
-  Typography,
   CardActions,
   Collapse,
+  Theme,
 } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
@@ -27,6 +27,11 @@ import { Container } from "@mui/material";
 import BasicSearch from "../basicSearch";
 import { useRouter } from "next/navigation";
 
+interface ExpandMoreProps {
+  expand?: boolean;
+  onClick?: () => void;
+}
+
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: "#fff",
   ...theme.typography.body2,
@@ -36,17 +41,19 @@ const Item = styled(Paper)(({ theme }) => ({
   width: "100%",
 }));
 
-const ExpandMore = muiStyled((props: any) => {
-  const { expand, ...other } = props;
-  return <IconButton {...other} />;
-})(({ theme, expand }: { theme: any; expand: boolean }) => ({
+const ExpandMore = muiStyled(
+  (props: ExpandMoreProps & { children: React.ReactNode }) => {
+    const { expand, children, ...other } = props;
+    console.log(expand);
+    return <IconButton {...other}>{children}</IconButton>;
+  }
+)(({ theme, expand }: { theme: Theme; expand?: boolean }) => ({
   transform: !expand ? "rotate(0deg)" : "rotate(180deg)",
   marginLeft: "auto",
   transition: theme.transitions.create("transform", {
     duration: theme.transitions.duration.shortest,
   }),
 }));
-
 export default function CardsList() {
   const [cardsData, setCardData] = useState<Scry.Card[] | null>(null);
   const [expanded, setExpanded] = useState<{ [key: string]: boolean }>({});
@@ -61,7 +68,7 @@ export default function CardsList() {
     console.log("search -> ", searchQuery);
 
     // Adicione aqui a lógica para buscar os dados com base no valor de searchQuery
-  }, [router.asPath]); // Dependência em router.asPath para detectar mudanças na URL
+  }, [router]); // Dependência em router.asPath para detectar mudanças na URL
 
   const handleExpandClick = (id: string) => {
     setExpanded((prevExpanded) => ({
@@ -75,7 +82,7 @@ export default function CardsList() {
       if (search) {
         try {
           const emitter = Scry.Cards.search(search as string)
-            .on("data", (card) => {})
+            .on("data", () => {})
             .on("end", () => {});
           const result = await emitter.waitForAll();
           const cards = result as Scry.Card[];

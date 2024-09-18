@@ -24,6 +24,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { styled as muiStyled } from "@mui/material/styles";
 import FormattedText from "../../../../utils/formated";
 import { Container } from "@mui/material";
+import AdvancedSearch from "../basicSearch";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: "#fff",
@@ -48,6 +49,8 @@ const ExpandMore = muiStyled((props: any) => {
 export default function CardsList() {
   const [cardsData, setCardData] = useState<Scry.Card[] | null>(null);
   const [expanded, setExpanded] = useState<{ [key: string]: boolean }>({});
+  const searchParams = new URLSearchParams(window.location.search); // Alternativa para capturar o search query
+  const search = searchParams.get("search");
 
   const handleExpandClick = (id: string) => {
     setExpanded((prevExpanded) => ({
@@ -58,21 +61,24 @@ export default function CardsList() {
 
   useEffect(() => {
     async function fetchCardData() {
-      try {
-        const emitter = Scry.Cards.search("type:planeswalker o:draw")
-          .on("data", (card) => {})
-          .on("end", () => {});
-        const result = await emitter.waitForAll();
-        const cards = result as Scry.Card[]; // Ajuste se necessário com base na estrutura dos dados
-        setCardData(cards);
-      } catch (error) {}
+      if (search) {
+        try {
+          const emitter = Scry.Cards.search(search as string)
+            .on("data", (card) => {})
+            .on("end", () => {});
+          const result = await emitter.waitForAll();
+          const cards = result as Scry.Card[];
+          setCardData(cards);
+        } catch (error) {}
+      }
     }
 
     fetchCardData();
-  }, []);
+  }, [search]);
 
   return (
     <Container maxWidth="lg">
+      <AdvancedSearch />
       <Box sx={{ flexGrow: 1, padding: 2 }}>
         <Grid
           container
@@ -80,13 +86,12 @@ export default function CardsList() {
           columns={{ xs: 1, sm: 2, md: 3, lg: 4 }}
         >
           {cardsData?.map((card) => (
-            <Grid key={card.id}>
+            <Grid key={card.id} size={{ xs: 1, sm: 1, md: 1, lg: 1 }}>
               <Item>
                 <Card
                   sx={{
                     width: "100%",
-                    maxWidth: "300px",
-                    height: "auto",
+                    minHeight: 300,
                     backgroundColor: "rgba(255, 255, 255, 0.5)",
                     backdropFilter: "blur(5px)",
                   }}

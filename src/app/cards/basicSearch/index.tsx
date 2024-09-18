@@ -77,13 +77,14 @@ export default function AdvancedSearch() {
 
   // Função que é chamada quando o usuário clica em uma sugestão
   const handleSuggestionClick = (suggestion: string) => {
-    setQuery(suggestion); // Atualiza o campo com o nome selecionado
+    setQuery("name:" + suggestion); // Atualiza o campo com o nome selecionado
     setSuggestions([]); // Esconde as sugestões após a seleção
   };
 
   const handleSearch = () => {
     if (query.length > 0) {
       router.push(`/cards/list?search=${query}`); // Redireciona para a página com query string
+      console.log("Pesquisar por:", query);
     }
   };
 
@@ -125,11 +126,7 @@ export default function AdvancedSearch() {
             }}
           >
             {suggestions.map((suggestion, index) => (
-              <ListItem
-                button
-                key={index}
-                onClick={() => handleSuggestionClick(suggestion)}
-              >
+              <ListItem onClick={() => handleSuggestionClick(suggestion)}>
                 <ListItemText primary={suggestion} />
               </ListItem>
             ))}

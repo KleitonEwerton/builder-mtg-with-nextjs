@@ -41,7 +41,7 @@ const Item = styled(Paper)(({ theme }) => ({
 
 const ExpandMore = muiStyled(
   (props: ExpandMoreProps & { children: React.ReactNode }) => {
-    const { expand, children, ...other } = props;
+    const { children, ...other } = props;
     return <IconButton {...other}>{children}</IconButton>;
   }
 )(({ theme, expand }: { theme: Theme; expand?: boolean }) => ({
@@ -124,7 +124,7 @@ export default function CardsList() {
                   sx={{
                     width: "100%",
                     minHeight: 300,
-                    backgroundColor: "rgba(255, 255, 255, 0.5)",
+                    backgroundColor: "rgba(255, 255, 255, 0)",
                     backdropFilter: "blur(5px)",
                   }}
                 >
@@ -146,6 +146,15 @@ export default function CardsList() {
                       maxHeight: "300px",
                     }}
                     alt={card.name}
+                    src={
+                      card.image_uris?.large ||
+                      card.image_uris?.normal ||
+                      card.image_uris?.small ||
+                      card.image_uris?.png ||
+                      card.image_uris?.art_crop ||
+                      card.image_uris?.border_crop ||
+                      "/public/img/default.jpg"
+                    }
                   />
                   <CardActions disableSpacing>
                     <IconButton aria-label="add to favorites">

@@ -1,8 +1,6 @@
 "use client"; // Adicione esta linha para tornar o componente um Client Component
 import { useEffect, useState } from "react";
 import * as Scry from "scryfall-sdk";
-
-// Import CSS
 import { styled } from "@mui/material/styles";
 import Grid from "@mui/material/Grid2";
 import Paper from "@mui/material/Paper";
@@ -44,7 +42,6 @@ const Item = styled(Paper)(({ theme }) => ({
 const ExpandMore = muiStyled(
   (props: ExpandMoreProps & { children: React.ReactNode }) => {
     const { expand, children, ...other } = props;
-    console.log(expand);
     return <IconButton {...other}>{children}</IconButton>;
   }
 )(({ theme, expand }: { theme: Theme; expand?: boolean }) => ({
@@ -54,21 +51,20 @@ const ExpandMore = muiStyled(
     duration: theme.transitions.duration.shortest,
   }),
 }));
+
 export default function CardsList() {
   const [cardsData, setCardData] = useState<Scry.Card[] | null>(null);
   const [expanded, setExpanded] = useState<{ [key: string]: boolean }>({});
   const [search, setSearch] = useState<string | null>(null);
   const router = useRouter();
+  const [page, setPage] = useState<number>(1); // Estado da página
+  const [isLastPage, setIsLastPage] = useState<boolean>(false); // Controla se é a última página
 
   useEffect(() => {
-    // Captura o parâmetro de busca da URL
     const query = new URLSearchParams(window.location.search);
     const searchQuery = query.get("search");
     setSearch(searchQuery);
-    console.log("search -> ", searchQuery);
-
-    // Adicione aqui a lógica para buscar os dados com base no valor de searchQuery
-  }, [router]); // Dependência em router.asPath para detectar mudanças na URL
+  }, [router]);
 
   const handleExpandClick = (id: string) => {
     setExpanded((prevExpanded) => ({
@@ -81,18 +77,36 @@ export default function CardsList() {
     async function fetchCardData() {
       if (search) {
         try {
-          const emitter = Scry.Cards.search(search as string)
-            .on("data", () => {})
-            .on("end", () => {});
-          const result = await emitter.waitForAll();
-          const cards = result as Scry.Card[];
+          const emitter = Scry.Cards.search(search as string, page)
+            .cancelAfterPage()
+            .on("error", () => {})
+            .on("not_found", () => {})
+            .waitForAll();
+          const cards = (await emitter) as Scry.Card[];
+
           setCardData(cards);
-        } catch (error) {}
+          // Se o número de cartas retornado for menor que 175, estamos na última página
+          setIsLastPage(cards.length < 175);
+        } catch (error) {
+          console.error("Erro ao buscar cartas:", error);
+        }
       }
     }
 
     fetchCardData();
-  }, [search]);
+  }, [search, page]); // Buscar dados com base na página
+
+  const handleNextPage = () => {
+    if (!isLastPage) {
+      setPage((prev) => prev + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (page > 1) {
+      setPage((prev) => prev - 1);
+    }
+  };
 
   return (
     <Container maxWidth="lg">
@@ -126,16 +140,11 @@ export default function CardsList() {
                   <CardMedia
                     component="img"
                     sx={{
-                      height: "auto", // Ajusta a altura automaticamente
-                      width: "100%", // Preenche a largura do card
-                      objectFit: "contain", // Garante que a imagem não seja cortada
-                      maxHeight: "300px", // Limita a altura máxima da imagem
+                      height: "auto",
+                      width: "100%",
+                      objectFit: "contain",
+                      maxHeight: "300px",
                     }}
-                    image={
-                      card.image_uris?.large ||
-                      card.image_uris?.normal ||
-                      card.image_uris?.small
-                    }
                     alt={card.name}
                   />
                   <CardActions disableSpacing>
@@ -167,6 +176,32 @@ export default function CardsList() {
           ))}
         </Grid>
       </Box>
+
+      {/* Paginação com Tailwind */}
+      <div className="flex justify-center space-x-1 mt-4">
+        {/* Botão Anterior */}
+        <button
+          onClick={handlePreviousPage}
+          disabled={page === 1}
+          className="rounded-full border border-slate-300 py-2 px-3 text-center text-sm transition-all shadow-sm hover:shadow-lg text-slate-600 hover:text-white hover:bg-slate-800 hover:border-slate-800 focus:text-white focus:bg-slate-800 focus:border-slate-800 active:border-slate-800 active:text-white active:bg-slate-800 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
+        >
+          Prev
+        </button>
+
+        {/* Botão Página Atual */}
+        <button className="text-white min-w-9 rounded-full bg-slate-800 py-2 px-3.5 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2">
+          {page}
+        </button>
+
+        {/* Botão Próxima */}
+        <button
+          onClick={handleNextPage}
+          disabled={isLastPage}
+          className="text-white rounded-full border border-slate-300 py-2 px-3 text-center text-sm transition-all shadow-sm hover:shadow-lg text-slate-600 hover:text-white hover:bg-slate-800 hover:border-slate-800 focus:text-white focus:bg-slate-800 focus:border-slate-800 active:border-slate-800 active:text-white active:bg-slate-800 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
+        >
+          Next
+        </button>
+      </div>
     </Container>
   );
 }

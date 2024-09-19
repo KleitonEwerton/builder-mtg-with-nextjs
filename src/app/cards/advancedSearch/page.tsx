@@ -55,13 +55,13 @@ export default function AdvancedSearch() {
   const router = useRouter();
 
   useEffect(() => {
-    // Atualiza a query sempre que name, oracle ou type mudam
     const buildQuery = () => {
       const parts = [];
       if (name) parts.push(`name:${name}`);
-      if (oracle) parts.push(`(oracle:${oracle.split(' ').join(' oracle:')})`);
+      if (oracle) parts.push(`(oracle:${oracle.split(" ").join(" oracle:")})`);
       if (type) parts.push(`type:${type}`);
-      return parts.join(' ');
+
+      return parts.join(" ");
     };
 
     setQuery(buildQuery());

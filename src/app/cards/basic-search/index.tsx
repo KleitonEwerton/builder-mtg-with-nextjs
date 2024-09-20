@@ -91,7 +91,7 @@ export default function AdvancedSearch() {
     window.location.href = `/cards/advanced-search`;
   };
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box>
       <AppBar position="static">
         <Tool>
           <Search>

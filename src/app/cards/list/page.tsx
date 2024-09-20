@@ -108,107 +108,113 @@ export default function CardsList() {
   };
 
   return (
-    <Container maxWidth="lg">
+    <div className="w-100">
       <BasicSearch />
-      <Box sx={{ flexGrow: 1, padding: 2 }}>
-        <Grid
-          container
-          spacing={{ xs: 2, sm: 3, md: 4, lg: 5 }}
-          columns={{ xs: 1, sm: 2, md: 3, lg: 4 }}
-        >
-          {cardsData?.map((card) => (
-            <Grid key={card.id} size={{ xs: 1, sm: 1, md: 1, lg: 1 }}>
-              <Item>
-                <Card
-                  sx={{
-                    width: "100%",
-                    minHeight: 300,
-                    backgroundColor: "rgba(255, 255, 255, 0)",
-                  }}
-                >
-                  <CardHeader
-                    action={
-                      <IconButton aria-label="settings">
-                        <MoreVertIcon />
-                      </IconButton>
-                    }
-                    title={card.name}
-                    subheader={card.colors?.join(", ")}
-                  />
-                  <CardMedia
-                    component="img"
+      <Container maxWidth="xl">
+        <Box sx={{ flexGrow: 1, padding: 2 }}>
+          <Grid
+            container
+            spacing={{ xs: 2, sm: 3, md: 4, lg: 5 }}
+            columns={{ xs: 1, sm: 2, md: 3, lg: 4 }}
+          >
+            {cardsData?.map((card) => (
+              <Grid key={card.id} size={{ xs: 1, sm: 1, md: 1, lg: 1 }}>
+                <Item>
+                  <Card
                     sx={{
-                      height: "auto",
                       width: "100%",
-                      objectFit: "contain",
-                      maxHeight: "300px",
+                      minHeight: 300,
+                      backgroundColor: "rgba(255, 255, 255, 0)",
                     }}
-                    alt={card.name}
-                    src={
-                      card.image_uris?.large ||
-                      card.image_uris?.normal ||
-                      card.image_uris?.small ||
-                      card.image_uris?.png ||
-                      card.image_uris?.art_crop ||
-                      card.image_uris?.border_crop ||
-                      "/img/default.jpg"
-                    }
-                  />
-                  <CardActions disableSpacing>
-                    <IconButton aria-label="add to favorites">
-                      <FavoriteIcon />
-                    </IconButton>
-                    <IconButton aria-label="share">
-                      <ShareIcon />
-                    </IconButton>
-                    <ExpandMore
-                      expand={expanded[card.id] || false}
-                      onClick={() => handleExpandClick(card.id)}
-                      aria-expanded={expanded[card.id] || false}
-                      aria-label="show more"
+                  >
+                    <CardHeader
+                      action={
+                        <IconButton aria-label="settings">
+                          <MoreVertIcon />
+                        </IconButton>
+                      }
+                      title={card.name}
+                      subheader={card.colors?.join(", ")}
+                    />
+                    <CardMedia
+                      component="img"
+                      sx={{
+                        height: "auto",
+                        width: "100%",
+                        objectFit: "contain",
+                        maxHeight: "300px",
+                      }}
+                      alt={card.name}
+                      src={
+                        card.image_uris?.large ||
+                        card.image_uris?.normal ||
+                        card.image_uris?.small ||
+                        card.image_uris?.png ||
+                        card.image_uris?.art_crop ||
+                        card.image_uris?.border_crop ||
+                        "/img/default.jpg"
+                      }
+                    />
+                    <CardActions disableSpacing>
+                      <IconButton aria-label="add to favorites">
+                        <FavoriteIcon />
+                      </IconButton>
+                      <IconButton aria-label="share">
+                        <ShareIcon />
+                      </IconButton>
+                      <ExpandMore
+                        expand={expanded[card.id] || false}
+                        onClick={() => handleExpandClick(card.id)}
+                        aria-expanded={expanded[card.id] || false}
+                        aria-label="show more"
+                      >
+                        <ExpandMoreIcon />
+                      </ExpandMore>
+                    </CardActions>
+                    <Collapse
+                      in={expanded[card.id]}
+                      timeout="auto"
+                      unmountOnExit
                     >
-                      <ExpandMoreIcon />
-                    </ExpandMore>
-                  </CardActions>
-                  <Collapse in={expanded[card.id]} timeout="auto" unmountOnExit>
-                    <CardContent>
-                      <FormattedText
-                        text={card.oracle_text || ""}
-                      ></FormattedText>
-                    </CardContent>
-                  </Collapse>
-                </Card>
-              </Item>
-            </Grid>
-          ))}
-        </Grid>
-      </Box>
+                      <CardContent>
+                        <FormattedText
+                          text={card.oracle_text || ""}
+                        ></FormattedText>
+                      </CardContent>
+                    </Collapse>
+                  </Card>
+                </Item>
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
 
-      {/* Paginação com Tailwind */}
-      <div className="flex justify-center space-x-1 mt-4">
-        {/* Botão Anterior */}
-        <button
-          onClick={handlePreviousPage}
-          disabled={page === 1}
-          className="text-white rounded-full border border-slate-300 py-2 px-3 text-center text-sm transition-all shadow-sm hover:shadow-lg text-slate-600 hover:text-white hover:bg-slate-800 hover:border-slate-800 focus:text-white focus:bg-slate-800 focus:border-slate-800 active:border-slate-800 active:text-white active:bg-slate-800 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
-        >
-          Prev
-        </button>
+        {/* Paginação com Tailwind */}
+        <div className="flex justify-center space-x-1 mt-4">
+          {/* Botão Anterior */}
+          <button
+            onClick={handlePreviousPage}
+            disabled={page === 1}
+            className="text-white rounded-full border border-slate-300 py-2 px-3 text-center text-sm transition-all shadow-sm hover:shadow-lg text-slate-600 hover:text-white hover:bg-slate-800 hover:border-slate-800 focus:text-white focus:bg-slate-800 focus:border-slate-800 active:border-slate-800 active:text-white active:bg-slate-800 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
+          >
+            Prev
+          </button>
 
-        {/* Botão Página Atual */}
-        <button className="text-white min-w-9 rounded-full bg-slate-800 py-2 px-3.5 border border-transparent text-center text-sm transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2">
-          {page}
-        </button>
+          {/* Botão Página Atual */}
+          <button className="text-white min-w-9 rounded-full bg-slate-800 py-2 px-3.5 border border-transparent text-center text-sm transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2">
+            {page}
+          </button>
 
-        {/* Botão Próxima */}
-        <button
-          onClick={handleNextPage}
-          disabled={isLastPage}
-          className="text-white rounded-full border border-slate-300 py-2 px-3 text-center text-sm transition-all shadow-sm hover:shadow-lg text-slate-600 hover:text-white hover:bg-slate-800 hover:border-slate-800 focus:text-white focus:bg-slate-800 focus:border-slate-800 active:border-slate-800 active:text-white active:bg-slate-800 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
-        >
-          Next
-        </button>
-      </div>
-    </Container>
+          {/* Botão Próxima */}
+          <button
+            onClick={handleNextPage}
+            disabled={isLastPage}
+            className="text-white rounded-full border border-slate-300 py-2 px-3 text-center text-sm transition-all shadow-sm hover:shadow-lg text-slate-600 hover:text-white hover:bg-slate-800 hover:border-slate-800 focus:text-white focus:bg-slate-800 focus:border-slate-800 active:border-slate-800 active:text-white active:bg-slate-800 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
+          >
+            Next
+          </button>
+        </div>
+      </Container>
+    </div>
   );
 }

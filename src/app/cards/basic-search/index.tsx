@@ -7,32 +7,24 @@ import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import * as Scry from "scryfall-sdk";
 import { useRouter } from "next/navigation";
-import { List, ListItem, ListItemText } from "@mui/material";
+import { Button, List, ListItem, ListItemText } from "@mui/material";
 
 const Search = styled("div")(({ theme }) => ({
-  position: "relative",
+  display: "flex",
+  color: "white",
+  flexDirection: "row",
+  justifyContent: "center",
   borderRadius: theme.shape.borderRadius,
   backgroundColor: alpha(theme.palette.common.black, 1),
   "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
+    backgroundColor: alpha(theme.palette.common.white, 0),
   },
   marginLeft: 0,
   width: "100%",
 }));
 
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  backgroundColor: alpha(theme.palette.common.black, 1),
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-}));
-
 const Input = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
+  color: "white",
   width: "100%",
   backgroundColor: alpha(theme.palette.common.black, 1),
   "& .MuiInputBase-input": {
@@ -42,8 +34,14 @@ const Input = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+const Botao = styled(Button)(({ theme }) => ({
+  backgroundColor: alpha(theme.palette.common.black, 1),
+  color: "white",
+}));
+
 const Tool = styled(Toolbar)(({ theme }) => ({
   backgroundColor: alpha(theme.palette.common.black, 1),
+  color: "white",
 }));
 
 export default function AdvancedSearch() {
@@ -77,25 +75,26 @@ export default function AdvancedSearch() {
 
   // Função que é chamada quando o usuário clica em uma sugestão
   const handleSuggestionClick = (suggestion: string) => {
-    setQuery("name:" + suggestion); // Atualiza o campo com o nome selecionado
+    setQuery(suggestion); // Atualiza o campo com o nome selecionado
     setSuggestions([]); // Esconde as sugestões após a seleção
   };
 
   const handleSearch = () => {
     if (query.length > 0) {
-      router.push(`/cards/list?search=${query}`); // Redireciona para a página com query string
-      console.log("Pesquisar por:", query);
+      router.push(`/cards/list?search=name:${query}`); // Redireciona para a página com query string
+      window.location.href = `/cards/list?search=name:${query}`;
     }
   };
 
+  const advanced = () => {
+    router.push(`/cards/advanced-search`); // Redireciona para a página de busca avançada
+    window.location.href = `/cards/advanced-search`;
+  };
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Tool>
           <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
             <Input
               placeholder="Search…"
               inputProps={{ "aria-label": "search" }}
@@ -110,6 +109,10 @@ export default function AdvancedSearch() {
               }}
               sx={{ width: "100%" }}
             />
+            <Botao onClick={handleSearch}>
+              <SearchIcon />
+            </Botao>
+            <Botao onClick={advanced}>Busca Avançada</Botao>
           </Search>
         </Tool>
         {/* Lista de sugestões */}
@@ -126,7 +129,10 @@ export default function AdvancedSearch() {
             }}
           >
             {suggestions.map((suggestion) => (
-              <ListItem key={suggestion} onClick={() => handleSuggestionClick(suggestion)}>
+              <ListItem
+                key={suggestion}
+                onClick={() => handleSuggestionClick(suggestion)}
+              >
                 <ListItemText primary={suggestion} />
               </ListItem>
             ))}

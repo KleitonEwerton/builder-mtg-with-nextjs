@@ -22,18 +22,17 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { styled as muiStyled } from "@mui/material/styles";
 import FormattedText from "../../../../utils/formated";
 import { Container } from "@mui/material";
-import BasicSearch from "../basicSearch";
+import BasicSearch from "../basic-search";
 import { useRouter } from "next/navigation";
-
 interface ExpandMoreProps {
   expand?: boolean;
   onClick?: () => void;
 }
 
 const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: "#fff",
+  backgroundColor: "rgba(255, 255, 255, 0.8)",
   ...theme.typography.body2,
-  padding: theme.spacing(1),
+  padding: theme.spacing(0),
   textAlign: "justify",
   color: theme.palette.text.secondary,
   width: "100%",
@@ -85,7 +84,7 @@ export default function CardsList() {
           const cards = (await emitter) as Scry.Card[];
 
           setCardData(cards);
-          // Se o número de cartas retornado for menor que 175, estamos na última página
+
           setIsLastPage(cards.length < 175);
         } catch (error) {
           console.error("Erro ao buscar cartas:", error);
@@ -125,7 +124,6 @@ export default function CardsList() {
                     width: "100%",
                     minHeight: 300,
                     backgroundColor: "rgba(255, 255, 255, 0)",
-                    backdropFilter: "blur(5px)",
                   }}
                 >
                   <CardHeader
@@ -153,7 +151,7 @@ export default function CardsList() {
                       card.image_uris?.png ||
                       card.image_uris?.art_crop ||
                       card.image_uris?.border_crop ||
-                      "/public/img/default.jpg"
+                      "/img/default.jpg"
                     }
                   />
                   <CardActions disableSpacing>

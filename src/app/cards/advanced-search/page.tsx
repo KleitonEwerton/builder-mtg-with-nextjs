@@ -8,6 +8,7 @@ export default function AdvancedSearch() {
   const [oracle, setOracle] = useState(""); // Estado para armazenar o texto do oracle
   const [type, setType] = useState(""); // Estado para armazenar o tipo da carta
   const [colors, setColors] = useState(""); // Estado para armazenar as cores da carta
+  const [identit, setIdentit] = useState(""); // Estado para armazenar a identidade do comandante
 
   const router = useRouter();
 
@@ -27,27 +28,23 @@ export default function AdvancedSearch() {
         .replace("red", "R")
         .replace("green", "G");
 
-      // Separa as palavras do oracle por espaço e adiciona mana para cada palavra
-      const oracleMana = oracle
+      const identidade = identit
         .toLowerCase()
         .replace("white", "W")
         .replace("blue", "U")
         .replace("black", "B")
         .replace("red", "R")
         .replace("green", "G")
-        .split(" ")
-        .map((word) => `mana:${word}`)
-        .join(" ");
-
-      if (!oracle.includes("")) parts.push(oracleMana);
+        .replace(" ", "");
 
       if (colors) parts.push(`mana:${mana.split(" ").join(" mana:")}`);
+      if (identit) parts.push(`c:${identidade}`);
 
       return parts.join(" ");
     };
 
     setQuery(buildQuery());
-  }, [name, oracle, type, colors]);
+  }, [name, oracle, type, colors, identit]);
 
   const handleSearch = () => {
     if (query.length > 0) {
@@ -110,6 +107,14 @@ export default function AdvancedSearch() {
                 placeholder="Card Colors (ex: white blue)"
                 className="w-full p-3 pl-10 text-black rounded-full border border-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
                 onChange={(e) => setColors(e.target.value)}
+              />
+            </div>
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Identidade do Comandante (ex: white blue)"
+                className="w-full p-3 pl-10 text-black rounded-full border border-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                onChange={(e) => setIdentit(e.target.value)}
               />
             </div>
           </div>

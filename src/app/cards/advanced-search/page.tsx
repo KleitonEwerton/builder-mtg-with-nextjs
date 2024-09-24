@@ -67,7 +67,7 @@ export default function AdvancedSearch() {
                 className="w-full p-3 pl-10 text-black rounded-full border border-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
                 onChange={(e) => setName(e.target.value)}
               />
-              <span className="absolute left-3 top-3 text-gray-500">
+              <span className="absolute left-3 top-4 text-gray-500">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5"

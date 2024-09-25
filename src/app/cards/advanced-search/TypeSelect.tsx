@@ -1,80 +1,87 @@
 import React, { useState, useEffect } from "react";
+import Select, { MultiValue } from "react-select";
 import * as Scry from "scryfall-sdk";
 
-export default function TypeSelect({ handleTypeChange }: { handleTypeChange: (types: string[]) => void }) {
-    const [artifactTypes, setArtifactTypes] = useState<string[]>([]);
-    const [creatureTypes, setCreatureTypes] = useState<string[]>([]);
-    const [enchantmentTypes, setEnchantmentTypes] = useState<string[]>([]);
-    const [planeswalkerTypes, setPlaneswalkerTypes] = useState<string[]>([]);
-    const [spellTypes, setSpellTypes] = useState<string[]>([]);
-    const [superTypes, setSuperTypes] = useState<string[]>([]);
+// Definindo o tipo para as opções
+type OptionType = {
+  value: string;
+  label: string;
+  group: string; // Para agrupar as opções, se necessário
+};
 
-    useEffect(() => {
-        const fetchTypes = async () => {
-            const artifactTypes = await Scry.Catalog.artifactTypes();
-            const creatureTypes = await Scry.Catalog.creatureTypes();
-            const enchantmentTypes = await Scry.Catalog.enchantmentTypes();
-            const planeswalkerTypes = await Scry.Catalog.planeswalkerTypes();
-            const spellTypes = await Scry.Catalog.spellTypes();
-            const superTypes = await Scry.Catalog.supertypes();
+export default function TypeSelect({
+  handleTypeChange,
+}: {
+  handleTypeChange: (types: string[]) => void;
+}) {
+  const [options, setOptions] = useState<OptionType[]>([]); // Usando o tipo definido
 
-            setArtifactTypes(artifactTypes);
-            setCreatureTypes(creatureTypes);
-            setEnchantmentTypes(enchantmentTypes);
-            setPlaneswalkerTypes(planeswalkerTypes);
-            setSpellTypes(spellTypes);
-            setSuperTypes(superTypes);
-        };
+  useEffect(() => {
+    const fetchTypes = async () => {
+      const artifactTypes = await Scry.Catalog.artifactTypes();
+      const creatureTypes = await Scry.Catalog.creatureTypes();
+      const enchantmentTypes = await Scry.Catalog.enchantmentTypes();
+      const planeswalkerTypes = await Scry.Catalog.planeswalkerTypes();
+      const spellTypes = await Scry.Catalog.spellTypes();
+      const superTypes = await Scry.Catalog.supertypes();
 
-        fetchTypes();
-    }, []);
+      // Montando as opções em um formato compatível com o React Select
+      const combinedOptions: OptionType[] = [
+        ...artifactTypes.map((type: string) => ({
+          value: type,
+          label: type,
+          group: "Artifact Types",
+        })),
+        ...creatureTypes.map((type: string) => ({
+          value: type,
+          label: type,
+          group: "Creature Types",
+        })),
+        ...enchantmentTypes.map((type: string) => ({
+          value: type,
+          label: type,
+          group: "Enchantment Types",
+        })),
+        ...planeswalkerTypes.map((type: string) => ({
+          value: type,
+          label: type,
+          group: "Planeswalker Types",
+        })),
+        ...spellTypes.map((type: string) => ({
+          value: type,
+          label: type,
+          group: "Spell Types",
+        })),
+        ...superTypes.map((type: string) => ({
+          value: type,
+          label: type,
+          group: "Super Types",
+        })),
+      ];
 
-    const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedOptions = Array.from(event.target.selectedOptions, (option) => option.value);
-        handleTypeChange(selectedOptions); // Passa os tipos selecionados para o componente pai
+      setOptions(combinedOptions);
     };
 
-    return (
-        <div className="relative">
-            <select 
-                multiple
-                onChange={handleChange}
-                className="w-full p-3 pl-10 text-black rounded-full border border-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                tabIndex={-1}
-                aria-label="Select Type(s)"
-            >
-                <option value="" disabled>Select Type(s)</option>
-                <optgroup label="Artifact Types">
-                    {artifactTypes.map((type) => (
-                        <option key={type} value={type}>{type}</option>
-                    ))}
-                </optgroup>
-                <optgroup label="Creature Types">
-                    {creatureTypes.map((type) => (
-                        <option key={type} value={type}>{type}</option>
-                    ))}
-                </optgroup>
-                <optgroup label="Enchantment Types">
-                    {enchantmentTypes.map((type) => (
-                        <option key={type} value={type}>{type}</option>
-                    ))}
-                </optgroup>
-                <optgroup label="Planeswalker Types">
-                    {planeswalkerTypes.map((type) => (
-                        <option key={type} value={type}>{type}</option>
-                    ))}
-                </optgroup>
-                <optgroup label="Spell Types">
-                    {spellTypes.map((type) => (
-                        <option key={type} value={type}>{type}</option>
-                    ))}
-                </optgroup>
-                <optgroup label="Super Types">
-                    {superTypes.map((type) => (
-                        <option key={type} value={type}>{type}</option>
-                    ))}
-                </optgroup>
-            </select>
-        </div>
-    );
+    fetchTypes();
+  }, []);
+
+  const handleChange = (
+    selectedOptions: MultiValue<OptionType> // Usando o tipo definido
+  ) => {
+    const selectedValues = selectedOptions
+      ? selectedOptions.map((option) => option.value)
+      : [];
+    handleTypeChange(selectedValues); // Passa os tipos selecionados para o componente pai
+  };
+
+  return (
+    <Select
+      isMulti
+      options={options}
+      onChange={handleChange}
+      classNamePrefix="select"
+      placeholder="Select Type(s)"
+      className="basic-multi-select w-full text-black rounded-full border border-gray-700"
+    />
+  );
 }

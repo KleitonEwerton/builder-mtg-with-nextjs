@@ -14,6 +14,8 @@ export default function AdvancedSearch() {
 
   const router = useRouter();
 
+
+
   // Construir a query com base nos campos preenchidos
   useEffect(() => {
     const buildQuery = () => {

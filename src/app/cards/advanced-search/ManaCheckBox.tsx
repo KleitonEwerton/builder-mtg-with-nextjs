@@ -42,12 +42,13 @@ export default function ManaCheckBox({
     black: "purple-900", // Alterado para purple-900
   };
 
+  // Substitua esses ícones pelo método real de carregar os ícones MTG (via SVG ou fonte)
   const colorIcons: { [key: string]: string } = {
-    red: "���",
-    blue: "��",
-    green: "���",
-    white: "��", 
-    black: "��", 
+    red: "🟥", // Placeholder
+    blue: "🟦", // Placeholder
+    green: "🟩", // Placeholder
+    white: "⬜", // Placeholder
+    black: "⬛", // Placeholder
   };
 
   return (
@@ -68,7 +69,7 @@ export default function ManaCheckBox({
             hover:border-${colorStyles[colorName]} hover:before:scale-100 hover:before:opacity-100`}
           >
             <span className="transition-all duration-100">
-              <p className="text-center">${colorIcons[colorName]}</p>
+              <p className="text-center">{colorIcons[colorName]}</p>
             </span>
           </span>
         </label>

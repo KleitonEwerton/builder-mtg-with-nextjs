@@ -62,6 +62,7 @@ export default function CardsList() {
   useEffect(() => {
     const query = new URLSearchParams(window.location.search);
     const searchQuery = query.get("search");
+
     setSearch(searchQuery);
   }, [router]);
 
@@ -74,6 +75,8 @@ export default function CardsList() {
 
   useEffect(() => {
     async function fetchCardData() {
+      
+
       if (search) {
         try {
           const emitter = Scry.Cards.search(search as string, page)

@@ -1,6 +1,8 @@
 "use client";
+
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import ManaCheckBox from "./ManaCheckBox";
 
 export default function AdvancedSearch() {
   const [query, setQuery] = useState(""); // Estado para armazenar o valor da pesquisa
@@ -12,33 +14,15 @@ export default function AdvancedSearch() {
 
   const router = useRouter();
 
+  // Construir a query com base nos campos preenchidos
   useEffect(() => {
     const buildQuery = () => {
       const parts = [];
       if (name) parts.push(`name:${name}`);
       if (oracle) parts.push(`(oracle:${oracle.split(" ").join(" oracle:")})`);
       if (type) parts.push(`type:${type}`);
-
-      //troca white por W, blue por U, black por B, red por R e green por G
-      const mana = colors
-        .toLowerCase()
-        .replace("white", "W")
-        .replace("blue", "U")
-        .replace("black", "B")
-        .replace("red", "R")
-        .replace("green", "G");
-
-      const identidade = identit
-        .toLowerCase()
-        .replace("white", "W")
-        .replace("blue", "U")
-        .replace("black", "B")
-        .replace("red", "R")
-        .replace("green", "G")
-        .replace(" ", "");
-
-      if (colors) parts.push(`mana:${mana.split(" ").join(" mana:")}`);
-      if (identit) parts.push(`c:${identidade}`);
+      if (colors) parts.push(`${colors}`);
+      if (identit) parts.push(`${identit}`);
 
       return parts.join(" ");
     };
@@ -47,14 +31,26 @@ export default function AdvancedSearch() {
   }, [name, oracle, type, colors, identit]);
 
   const handleSearch = () => {
+    console.log("handleSearch", query);
     if (query.length > 0) {
       router.push(`/cards/list?search=${query}`);
     }
   };
 
+  // Função para atualizar o estado de cores a partir do ManaCheckBox
+  const handleColorsChange = (newColors: string) => {
+    setColors(newColors); // Atualiza o estado das cores selecionadas
+    console.log("setColors", newColors);
+  };
+
+  const handleIdentitChange = (newColors: string) => {
+    setIdentit(newColors); // Atualiza o estado das cores selecionadas
+    console.log("setIdentit", newColors);
+  };
+
   return (
-    <div className="min-h-screen bg-black text-white p-6">
-      <div className="w-full bg-black py-4">
+    <div className="min-h-screen bg-black text-white p-6 bg-gray-900">
+      <div className="w-full bg-black py-4 bg-gray-900">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-center text-2xl font-bold mb-6">
             Advanced Card Search
@@ -101,22 +97,30 @@ export default function AdvancedSearch() {
               />
             </div>
 
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Card Colors (ex: white blue)"
-                className="w-full p-3 pl-10 text-black rounded-full border border-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                onChange={(e) => setColors(e.target.value)}
-              />
-            </div>
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Identidade do Comandante (ex: white blue)"
-                className="w-full p-3 pl-10 text-black rounded-full border border-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                onChange={(e) => setIdentit(e.target.value)}
-              />
-            </div>
+            <input
+              type="text"
+              placeholder="Cores"
+              className="w-full p-3 pl-10 text-white rounded-full border border-gray-700 bg-gray-900 cursor-not-allowed pointer-events-none"
+              disabled
+              tabIndex={-1}
+            />
+
+            <ManaCheckBox
+              handleFunctionChance={handleColorsChange}
+              queryLetter="c"
+            />
+            <input
+              type="text"
+              placeholder="Commandante"
+              className="w-full p-3 pl-10 text-white rounded-full border border-gray-700 bg-gray-900 cursor-not-allowed pointer-events-none"
+              disabled
+              tabIndex={-1}
+            />
+
+            <ManaCheckBox
+              handleFunctionChance={handleIdentitChange}
+              queryLetter="commander"
+            />
           </div>
 
           <div className="mt-6 text-center">

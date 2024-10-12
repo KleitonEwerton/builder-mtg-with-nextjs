@@ -42,3 +42,8 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 Deployment
 
 [Deck Builder](https://deckbuildermtg.vercel.app/cards/advancedSearch)
+
+# FUTURO
+  [ ] SALVAR FAVORITOS
+  [ ] SALVAR DECKS
+  [ ] EXPLORAR OUTRAS OPÇÕES DE BUSCAS DA API
